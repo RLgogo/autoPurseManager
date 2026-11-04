@@ -1,0 +1,28 @@
+name: build andrio
+
+on:
+    push:
+        branches:
+            - develop/test
+        
+    
+
+jobs:
+    build_andrio:
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v7
+              name: clone repo
+
+            - name: download qt
+              uses: jurplel/install-qt-action@v4
+              with:
+                version: '6.12.0'
+                cache: true
+                host: 'linux'
+                target: 'android'
+
+            - name: env test
+              run: |
+                qt --version
+                make --version
