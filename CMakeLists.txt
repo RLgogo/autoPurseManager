@@ -11,7 +11,33 @@ Core Gui Sql Quick Qml Charts QuickDialogs2 QuickControls2 Concurrent Svg
 )
 qt_standard_project_setup()
 
-add_subdirectory(third_party/QXlsx/QXlsx)
+if(Qt6Gui_VERSION VERSION_GREATER_EQUAL "6.10.0")
+    find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
+endif()
+
+# QXlsx 源码已并入本仓库（qxlsx/），作为项目内部静态库直接参与编译
+set(QXLSX_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/qxlsx)
+file(GLOB QXLSX_SOURCES CONFIGURE_DEPENDS ${QXLSX_ROOT}/source/*.cpp)
+file(GLOB QXLSX_HEADERS CONFIGURE_DEPENDS ${QXLSX_ROOT}/header/*.h)
+
+add_library(qxlsx STATIC ${QXLSX_SOURCES} ${QXLSX_HEADERS})
+target_include_directories(qxlsx PUBLIC ${QXLSX_ROOT}/header)
+target_link_libraries(qxlsx PUBLIC Qt6::Core Qt6::Gui PRIVATE Qt6::GuiPrivate)
+target_compile_definitions(qxlsx PRIVATE
+    QT_NO_KEYWORDS
+    QT_NO_CAST_TO_ASCII
+    QT_NO_CAST_FROM_ASCII
+    QT_NO_URL_CAST_FROM_STRING
+    QT_NO_CAST_FROM_BYTEARRAY
+    QT_USE_QSTRINGBUILDER
+    QT_NO_SIGNALS_SLOTS_KEYWORDS
+    QT_USE_FAST_OPERATOR_PLUS
+    QT_DISABLE_DEPRECATED_BEFORE=0x060600
+)
+if(NOT WIN32)
+    # Windows 下与 Qt 自身的严格迭代器设置冲突，会导致链接错误
+    target_compile_definitions(qxlsx PRIVATE QT_STRICT_ITERATORS)
+endif()
 
 qt_add_executable(autoPurseManager
     main.cpp
@@ -62,7 +88,7 @@ target_link_libraries(autoPurseManager PRIVATE
     Qt6::Charts Qt6::QuickDialogs2
     Qt6::QuickControls2
     Qt6::Concurrent
-    QXlsx::QXlsx
+    qxlsx
 )
 
 qt_add_resources(autoPurseManager "icons"
