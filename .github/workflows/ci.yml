@@ -23,7 +23,12 @@ jobs:
                 target: 'android'
                 arch: 'android_armv7'
 
-            - name: env test
+            - name: Verify Qt Installation (Corrected)
               run: |
-                qt --version
+                echo "QT_ROOT_DIR is: $QT_ROOT_DIR"
+                # 验证 qmake（Qt 的核心构建工具）的版本和路径
+                "$QT_ROOT_DIR/bin/qmake" --version
+                # 验证 make 是否可用（ubuntu-22.04 通常已预装，显式检查更稳妥）
                 make --version
+                # 可选：列出安装目录内容，确认 Android 架构包已就位
+                ls "$QT_ROOT_DIR"
