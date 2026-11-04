@@ -3,7 +3,7 @@ name: build andrio
 on:
     push:
         branches:
-            - develop/test
+            - feature/test
         
     
 
