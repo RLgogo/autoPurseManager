@@ -1,0 +1,94 @@
+{
+  "themes": [
+    {
+      "id": "light_mono", "name": "Mono",
+      "bg": "#f5f6f8", "card": "#ffffff", "text": "#1a1a1a",
+      "muted": "#666666", "faint": "#9a9a9a",
+      "accent": "#1a1a1a", "accentText": "#ffffff",
+      "btnBg": "#f0f0f0", "btnText": "#333333",
+      "border": "#e0e0e0", "grid": "#eeeeee",
+      "danger": "#e05c5c", "dangerBg": "#fdecec"
+    },
+    {
+      "id": "dark_mono", "name": "Mono Dark",
+      "bg": "#121212", "card": "#1e1e1e", "text": "#f0f0f0",
+      "muted": "#b0b0b0", "faint": "#6a6a6a",
+      "accent": "#f0f0f0", "accentText": "#1a1a1a",
+      "btnBg": "#2a2a2a", "btnText": "#d0d0d0",
+      "border": "#333333", "grid": "#2a2a2a",
+      "danger": "#ff7b7b", "dangerBg": "#3a1f1f"
+    },
+    {
+      "id": "light_purple", "name": "Purple",
+      "bg": "#f7f5fc", "card": "#ffffff", "text": "#2a1e3e",
+      "muted": "#6e5f8a", "faint": "#9a8fb0",
+      "accent": "#6b46c1", "accentText": "#ffffff",
+      "btnBg": "#ede8f7", "btnText": "#4a3575",
+      "border": "#e0d8f0", "grid": "#ede8f7",
+      "danger": "#e05c5c", "dangerBg": "#fdecec"
+    },
+    {
+      "id": "dark_purple", "name": "Purple Dark",
+      "bg": "#1a1620", "card": "#241e2e", "text": "#ece8f5",
+      "muted": "#a99fc0", "faint": "#6e6485",
+      "accent": "#a78bfa", "accentText": "#1a1620",
+      "btnBg": "#2f2838", "btnText": "#d0c8e0",
+      "border": "#3a3247", "grid": "#2f2838",
+      "danger": "#ff7b7b", "dangerBg": "#3a1f1f"
+    },
+    {
+      "id": "light_red", "name": "Red",
+      "bg": "#fdf6f6", "card": "#ffffff", "text": "#2a1616",
+      "muted": "#8a5a5a", "faint": "#b08a8a",
+      "accent": "#c53030", "accentText": "#ffffff",
+      "btnBg": "#f7e8e8", "btnText": "#8a3a3a",
+      "border": "#f0d8d8", "grid": "#f7e8e8",
+      "danger": "#e05c5c", "dangerBg": "#fdecec"
+    },
+    {
+      "id": "dark_red", "name": "Red Dark",
+      "bg": "#1a1212", "card": "#241a1a", "text": "#f5e8e8",
+      "muted": "#c0a0a0", "faint": "#856060",
+      "accent": "#f56565", "accentText": "#1a1212",
+      "btnBg": "#2f2222", "btnText": "#d0b0b0",
+      "border": "#3a2828", "grid": "#2f2222",
+      "danger": "#ff7b7b", "dangerBg": "#3a1f1f"
+    },
+    {
+      "id": "light_blue", "name": "Blue",
+      "bg": "#f4f8fd", "card": "#ffffff", "text": "#16202e",
+      "muted": "#5a708a", "faint": "#8aa0b8",
+      "accent": "#2b6cb0", "accentText": "#ffffff",
+      "btnBg": "#e6f0fa", "btnText": "#2b5a8a",
+      "border": "#d8e4f0", "grid": "#e6f0fa",
+      "danger": "#e05c5c", "dangerBg": "#fdecec"
+    },
+    {
+      "id": "dark_blue", "name": "Blue Dark",
+      "bg": "#12161a", "card": "#1a2028", "text": "#e8f0f5",
+      "muted": "#9ab0c0", "faint": "#607580",
+      "accent": "#63b3ed", "accentText": "#12161a",
+      "btnBg": "#222a33", "btnText": "#b0c4d0",
+      "border": "#2a3540", "grid": "#222a33",
+      "danger": "#ff7b7b", "dangerBg": "#3a1f1f"
+    },
+    {
+      "id": "light_gold", "name": "Gold",
+      "bg": "#fdf9f2", "card": "#ffffff", "text": "#2a1f10",
+      "muted": "#8a6a3a", "faint": "#b09a70",
+      "accent": "#b7791f", "accentText": "#ffffff",
+      "btnBg": "#faf0e0", "btnText": "#8a5a1a",
+      "border": "#f0e4cc", "grid": "#faf0e0",
+      "danger": "#e05c5c", "dangerBg": "#fdecec"
+    },
+    {
+      "id": "dark_gold", "name": "Gold Dark",
+      "bg": "#1a160e", "card": "#241e14", "text": "#f5ecd8",
+      "muted": "#c0a878", "faint": "#857050",
+      "accent": "#ecc94b", "accentText": "#1a160e",
+      "btnBg": "#2f2818", "btnText": "#d0c0a0",
+      "border": "#3a3020", "grid": "#2f2818",
+      "danger": "#ff7b7b", "dangerBg": "#3a1f1f"
+    }
+  ]
+}

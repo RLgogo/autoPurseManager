@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9B7BC8"/>
+      <stop offset="100%" stop-color="#5A3A88"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0.1" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#FBE79A"/>
+      <stop offset="45%" stop-color="#E8B84A"/>
+      <stop offset="100%" stop-color="#A87A00"/>
+    </linearGradient>
+
+    <linearGradient id="meltGrad" gradientUnits="userSpaceOnUse" x1="200" y1="0" x2="300" y2="0">
+      <stop offset="0%" stop-color="white"/>
+      <stop offset="30%" stop-color="white"/>
+      <stop offset="100%" stop-color="black"/>
+    </linearGradient>
+
+    <mask id="meltB" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
+      <rect width="512" height="512" fill="url(#meltGrad)"/>
+    </mask>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+
+  <g mask="url(#meltB)">
+    <text x="195" y="432"
+          font-family="'Microsoft YaHei','微软雅黑','PingFang SC',sans-serif"
+          font-size="450" font-weight="700" text-anchor="middle"
+          fill="url(#goldGrad)">B</text>
+  </g>
+
+  <text x="345" y="432"
+        font-family="'Microsoft YaHei','微软雅黑','PingFang SC',sans-serif"
+        font-size="450" font-weight="700" text-anchor="middle"
+        fill="url(#goldGrad)">$</text>
+</svg>

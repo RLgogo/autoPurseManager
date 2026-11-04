@@ -1,0 +1,23 @@
+# ---- 构建产物 ----
+/build/
+/build-*/
+/cmake-build-*/
+/CMakeFiles/
+
+# ---- 发布包 ----
+/release-package/
+*.zip
+
+# ---- 编辑器 / IDE ----
+/.vscode/
+/.idea/
+*.user
+
+# ---- 运行时数据（实际写入 AppData，仓库内 data/ 仅占位） ----
+/data/
+
+# ---- 第三方库 ----
+# third_party/QXlsx 是完整的 QXlsx 仓库（自带 .git、示例与文档），
+# 这里只保留构建所需的库源码目录，避免把上游历史与示例纳入本项目。
+/third_party/QXlsx/*
+!/third_party/QXlsx/QXlsx/
