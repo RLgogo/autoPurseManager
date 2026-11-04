@@ -17,10 +17,11 @@ jobs:
             - name: download qt
               uses: jurplel/install-qt-action@v4
               with:
-                version: '6.12.0'
+                version: ' 6.7.0'
                 cache: true
-                host: 'linux'
+                host: 'all_os'
                 target: 'android'
+                arch: 'android_armv7
 
             - name: env test
               run: |
