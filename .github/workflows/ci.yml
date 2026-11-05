@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - feature/test
+    tags:
+      - 'v*'
   pull_request:
   workflow_dispatch:
     inputs:
@@ -12,6 +14,10 @@ on:
         description: 'Qt version to build with'
         required: false
         default: '6.12.0'
+      release_tag:
+        description: 'Publish the APKs to this release tag (e.g. v1.0.0); leave empty to only build'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -140,3 +146,33 @@ jobs:
           name: autoPurseManager-${{ matrix.abi }}
           path: dist/*.apk
           if-no-files-found: error
+
+  # Attach the built APKs to a GitHub Release.
+  # Triggered by pushing a "v*" tag, or manually with a release_tag input.
+  publish-release:
+    name: Publish release
+    needs: build-apk
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: autoPurseManager-*
+          path: dist
+          merge-multiple: true
+
+      - name: List APKs
+        run: ls -lh dist
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.release_tag }}
+          name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.release_tag }}
+          files: dist/*.apk
+          fail_on_unmatched_files: true
+          generate_release_notes: true
