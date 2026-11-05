@@ -1,4 +1,4 @@
-﻿import QtQuick
+import QtQuick
 import QtQuick.Window
 import QtQuick.Dialogs
 
@@ -1613,6 +1613,7 @@ Window {
     FileDialog {
         id: fileDialog
         title: rootWindow.txt.selectFile
+        fileMode: FileDialog.OpenFile
         nameFilters: [rootWindow.txt.excelFilter, rootWindow.txt.allFilter]
         onAccepted: billModel.importXlsx(selectedFile)
     }

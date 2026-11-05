@@ -66,6 +66,8 @@ public:
 
     static bool isFileAlreadyImported(const QString &path, qint64 size,
                                       const QDateTime &mtime);
+    // 仅按路径判断：content:// URI 没有可靠的修改时间/大小，用它去重。
+    static bool isFileImported(const QString &path);
     static void markFileImported(const QString &path, qint64 size,
                                  const QDateTime &mtime);
 

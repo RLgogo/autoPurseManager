@@ -1,5 +1,5 @@
 #pragma once
-#include <Qstring>
+#include <QString>
 #include <QDateTime>
 
 struct BillRecord

@@ -260,8 +260,18 @@ bool BillStorage::isFileAlreadyImported(const QString &path, qint64 size,
     q.prepare("SELECT file_size, file_mtime FROM import_log WHERE file_path = ?");
     q.addBindValue(path);
     if (!q.exec() || !q.next()) return false;
-    return q.value(0).toLongLong() == size
-        && q.value(1).toString() == mtime.toString(Qt::ISODate);
+    if (q.value(0).toLongLong() != size) return false;
+    const QString storedMtime = q.value(1).toString();
+    if (storedMtime.isEmpty()) return true; // 旧版/内容 URI 记录没有 mtime，只比较大小
+    return storedMtime == mtime.toString(Qt::ISODate);
+}
+
+bool BillStorage::isFileImported(const QString &path) {
+    if (!db().isOpen() || path.isEmpty()) return false;
+    QSqlQuery q(db());
+    q.prepare("SELECT 1 FROM import_log WHERE file_path = ? LIMIT 1");
+    q.addBindValue(path);
+    return q.exec() && q.next();
 }
 
 void BillStorage::markFileImported(const QString &path, qint64 size,

@@ -4,10 +4,14 @@ project(autoPurseManager VERSION 1.0.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_PREFIX_PATH "C:/Qt/Qt6.12/6.12.0/mingw_64")
+# 仅在 Windows 桌面且调用方没有显式指定 Qt 路径时，使用本机默认安装位置；
+# Android 等交叉编译工具链会通过 -DCMAKE_PREFIX_PATH 提供自己的 Qt。
+if(WIN32 AND NOT ANDROID AND NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "C:/Qt/Qt6.12/6.12.0/mingw_64")
+endif()
 
-find_package(Qt6 REQUIRED COMPONENTS 
-Core Gui Sql Quick Qml Charts QuickDialogs2 QuickControls2 Concurrent Svg
+find_package(Qt6 REQUIRED COMPONENTS
+    Core Gui Sql Quick Qml QuickDialogs2 QuickControls2 Concurrent Svg
 )
 qt_standard_project_setup()
 
@@ -45,6 +49,8 @@ qt_add_executable(autoPurseManager
     core/billstorage.cpp
     core/categoryrules.cpp
     core/billclassifier.cpp
+    core/importfile.cpp
+    core/importfile.h
     model/billmodel.cpp
     model/billmodel.h
     model/accountmanager.cpp
@@ -85,7 +91,7 @@ qt_add_resources(autoPurseManager "translations"
 
 target_link_libraries(autoPurseManager PRIVATE
     Qt6::Core Qt6::Gui Qt6::Sql Qt6::Quick Qt6::Qml Qt6::Svg
-    Qt6::Charts Qt6::QuickDialogs2
+    Qt6::QuickDialogs2
     Qt6::QuickControls2
     Qt6::Concurrent
     qxlsx

@@ -2,11 +2,11 @@
 #include "core/billparser.h"
 #include "core/billstorage.h"
 #include "core/billclassifier.h"
+#include "core/importfile.h"
 #include "forecastengine.h"
 #include <QDate>
 #include <QMap>
 #include <QVariantMap>
-#include <QFileInfo>
 #include <QUrl>
 #include <QUuid>
 #include <QtConcurrent/QtConcurrentRun>
@@ -101,15 +101,19 @@ void BillModel::importXlsx(const QUrl &url) {
     if (m_importing) return;
     m_cancelFlag.storeRelease(0);
 
-    QString path = url.toLocalFile();
-    QFileInfo fi(path);
-    if (!fi.exists()) {
-        emit importDone(QStringLiteral("File not found"));
+    ImportFile::Source source;
+    QString sourceError;
+    if (!ImportFile::inspect(url, &source, &sourceError)) {
+        emit importDone(sourceError);
         return;
     }
 
-    QString absPath = fi.absoluteFilePath();
-    if (BillStorage::isFileAlreadyImported(absPath, fi.size(), fi.lastModified())) {
+    // 本地文件可以按“路径 + 大小 + 修改时间”判断；content:// URI 没有可靠的
+    // 修改时间，只按路径去重，避免重复把大文件复制进缓存。
+    const bool alreadyImported = source.local
+        ? BillStorage::isFileAlreadyImported(source.key, source.size, source.modified)
+        : BillStorage::isFileImported(source.key);
+    if (alreadyImported) {
         emit importDone(QStringLiteral("File unchanged, skipped"));
         return;
     }
@@ -118,35 +122,51 @@ void BillModel::importXlsx(const QUrl &url) {
     m_importStartTime = QDateTime::currentDateTime();
     emit importingChanged();
 
-    auto future = QtConcurrent::run([this, path, absPath]() {
+    auto future = QtConcurrent::run([this, source]() mutable {
         QString err;
-        QVector<BillRecord> records = BillParser::parseXlsx(path, {}, &err, &m_cancelFlag);
-        if (m_cancelFlag.loadAcquire() != 0) {
-            QMetaObject::invokeMethod(this, [this]() {
+
+        auto postError = [this](const QString &message) {
+            QMetaObject::invokeMethod(this, [this, message]() {
                 m_importing = false;
                 emit importingChanged();
-                emit importDone(QStringLiteral("Import cancelled"));
+                emit importDone(message);
             }, Qt::QueuedConnection);
+        };
+
+        // Android 的 FileDialog 返回 content:// URI，QXlsx 只能读本地文件，
+        // 先流式复制到缓存目录再解析；临时副本在解析结束后立即删除。
+        if (!ImportFile::materialize(&source, &err, &m_cancelFlag)) {
+            if (m_cancelFlag.loadAcquire() != 0)
+                postError(QStringLiteral("Import cancelled"));
+            else
+                postError(err.isEmpty() ? QStringLiteral("Import failed") : err);
+            return;
+        }
+
+        QVector<BillRecord> records = BillParser::parseXlsx(source.path, {}, &err, &m_cancelFlag);
+
+        ImportFile::discard(source);
+        source.temporary = false;
+
+        if (m_cancelFlag.loadAcquire() != 0) {
+            postError(QStringLiteral("Import cancelled"));
+            return;
+        }
+        if (!err.isEmpty()) {
+            postError(QStringLiteral("Parse failed: ") + err);
             return;
         }
 
         QMetaObject::invokeMethod(this,
-            [this, absPath, records = std::move(records), err]() mutable {
-            if (!err.isEmpty()) {
-                m_importing = false;
-                emit importingChanged();
-                emit importDone(QStringLiteral("Parse failed: ") + err);
-                return;
-            }
-
-            QFileInfo fi(absPath);
+            [this, source, records = std::move(records)]() mutable {
             BillClassifier::classifyAll(records);
 
-            QString importId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            const QString importId = QUuid::createUuid().toString(QUuid::WithoutBraces);
             int skipped = 0;
             QString insertErr;
-            int inserted = BillStorage::insertRecords(records, &skipped, &insertErr,
-                                                      importId, fi.fileName(), absPath);
+            const int inserted = BillStorage::insertRecords(records, &skipped, &insertErr,
+                                                            importId, source.displayName,
+                                                            source.key);
 
             if (!insertErr.isEmpty()) {
                 m_importing = false;
@@ -155,13 +175,13 @@ void BillModel::importXlsx(const QUrl &url) {
                 return;
             }
 
-            BillStorage::markFileImported(absPath, fi.size(), fi.lastModified());
+            BillStorage::markFileImported(source.key, source.size, source.modified);
 
             setRecords(BillStorage::fetchAll());
             ++m_categoriesRevision;
             emit categoriesChanged();
 
-            double sec = m_importStartTime.msecsTo(QDateTime::currentDateTime()) / 1000.0;
+            const double sec = m_importStartTime.msecsTo(QDateTime::currentDateTime()) / 1000.0;
             m_importing = false;
             emit importingChanged();
             emit importDone(QStringLiteral("Imported %1, skipped %2, %3s")
